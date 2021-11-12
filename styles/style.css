@@ -40,4 +40,8 @@ body .news__count {
   margin: 10px 0 0 0;
   display: block;
 }
+
+body .test-input {
+  margin: 0 5px 5px 0;
+}
 /*# sourceMappingURL=style.css.map */

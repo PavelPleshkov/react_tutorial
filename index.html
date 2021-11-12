@@ -12,11 +12,6 @@
     <!-- Не используйте это в production -->
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
     <link rel="stylesheet" href="styles/style.css">
-    <!-- <style>
-      .red {
-        color: #FF0000;
-      }
-    </style> -->
     <title>React [RU] Tutorial v2</title>
 </head>
 <body>
@@ -27,47 +22,87 @@
 
       const myNews = [
         {
-          id: 1, // добавили id
+          id: 1,
           author: 'Саша Печкин',
-          text: 'В четверг, четвертого числа...'
+          text: 'В четверг, четвертого числа...',
+          bigText: 'в четыре с четвертью часа четыре чёрненьких чумазеньких чертёнка чертили чёрными чернилами чертёж.'
         },
         {
           id: 2,
           author: 'Просто Вася',
-          text: 'Считаю, что $ должен стоить 35 рублей!'
+          text: 'Считаю, что $ должен стоить 35 рублей!',
+          bigText: 'А евро 42!'
         },
         {
           id: 3,
           author: 'Max Frontend',
-          text: 'Прошло 2 года с прошлых учебников, а $ так и не стоит 35'
+          text: 'Прошло 2 года с прошлых учебников, а $ так и не стоит 35',
+          bigText: 'А евро опять выше 70.'
         },
         {
           id: 4,
           author: 'Гость',
-          text: 'Бесплатно. Без смс, про реакт, заходи - https://maxpfrontend.ru'
-        },
-        {
-          id: 5,
-          author: 'Гость',
-          text: 'next news item'
+          text: 'Бесплатно. Без смс, про реакт, заходи - https://maxpfrontend.ru',
+          bigText: 'Еще есть группа VK, telegram и канал на youtube! Вся инфа на сайте, не реклама!'
         }
       ];
 
       // const myNews = [];
       class Article extends React.Component {
+        state = {
+          visible: false, //определили начальное состояние
+        }
+
+        handleReadMoreClck = (e) => {
+          const {id} = this.props.data;
+          e.preventDefault();
+          this.setState({visible: true}, () => {
+            console.log(`state ${id} has changed`)
+          });
+        }
+
         render () {
-          const {author, text} = this.props.data;
+          const {author, text, bigText} = this.props.data;
+          const {visible} = this.state;
+
+          // console.log('render', this);
 
           return (
               <div className="article">
                 <p className="news__author">{author}:</p>
                 <p className="news__text">{text}</p>
+                {
+                  !visible ? <a onClick={this.handleReadMoreClck} href="#" className="news__readmore">Подробнее</a> : <p className="news__big-text">{bigText}</p>
+                }
+                { /* если не visible, то показывай 
+                  !visible && <a href="#" className='news__readmore'>Подробнее</a>*/
+                }
+                { /* если visible, то показывай 
+                  visible && <p className='news__big-text'>{bigText}</p>*/
+                }
               </div>
           )
         };
       }
 
+      // PropTypes не работает с production версией реакта. Эта фича только для разработки, так как валидация - дорогая операция
+      Article.propTypes = {
+        data: PropTypes.shape({
+          author: PropTypes.string.isRequired,
+          text: PropTypes.string.isRequired,
+          bigText: PropTypes.string.isRequired
+        })
+      }
+
       class News extends React.Component {
+        // state = {
+        //   counter: 0,
+        // }
+
+        // handleNewsCountClck = (e) => {
+        //   this.setState({counter: ++this.state.counter});
+        // }
+
         //метод renderNews (внутри class) с помощью так называемой "жирной стрелочной функции" (запись вида methodName = () => ...). При такой записи, внутри функции мы не теряем контекст this. То есть, можем обращаться к this.props, например
         renderNews = () => {
           const {data} = this.props;
@@ -93,26 +128,77 @@
         // Почему мы метод render не описываем через жирную стрелочную функцию? Потому что, это метод жизненного цикла react-компонента, и туда this "прокидывает" уже сам react.
         render() {
           const {data} = this.props;
+          // const {counter} = this.state;
 
           return (
             <div className="news">
               {this.renderNews()}
               {
-                data.length ? <strong className="news__count">Всего новостей: {data.length}</strong> : null
+                data.length ? <strong className="news__count" /*onClick={this.handleNewsCountClck}*/>Всего новостей: {data.length}</strong> : null
+              }
+              {/*
+                <p>Всего кликов: {counter}</p>*/
               }
             </div>
           );
         }
       }
 
+      // PropTypes не работает с production версией реакта. Эта фича только для разработки, так как валидация - дорогая операция
       News.propTypes = {
         data: PropTypes.array.isRequired // PropTypes (с большой буквы) = библиотека prop-types
+      }
+
+      //Controlled components
+      // class TestInput extends React.Component {
+      //   state = {
+      //     inputValue: '',
+      //   }
+
+      //   onChangeHandler = (e) => {
+      //     this.setState({inputValue: e.currentTarget.value})
+      //   }
+
+      //   onBtnClickHandler = (e) => {
+      //     alert(this.state.inputValue);
+      //   }
+
+      //   render() {
+      //     return (
+      //       <React.Fragment>
+      //         <input className="test-input" onChange={this.onChangeHandler} value={this.state.inputValue} placeholder="введите значение"/>
+      //         <button type="button" onClick={this.onBtnClickHandler}>Показать alert</button>
+      //       </React.Fragment>
+      //     )
+      //   }
+      // }
+
+      //Uncontrolled Components
+      class TestInput extends React.Component {
+        constructor(props) {
+          super(props);
+          this.input = React.createRef();
+        }
+
+        onBtnClickHandler = (e) => {
+          alert(this.input.current.value);
+        }
+
+        render() {
+          return (
+            <React.Fragment>
+              <input className="test-input" defaultValue="" placeholder="введите значение" ref={this.input}/>
+              <button type="button" onClick={this.onBtnClickHandler}>Показать alert</button>
+            </React.Fragment>
+          )
+        }
       }
 
       const App = () => {
         return (
           <React.Fragment>
             <h3>Новости</h3>
+            <TestInput/>
             <News data={myNews}/> {/* добавили свойство data */}
           </React.Fragment>
         )

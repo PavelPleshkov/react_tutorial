@@ -41,7 +41,36 @@ body .news__count {
   display: block;
 }
 
-body .test-input {
+body .add {
   margin: 0 5px 5px 0;
+  width: 210px;
+  border: 1px dashed rgba(0, 89, 181, 0.82);
+  padding: 5px;
+}
+
+body .add__author, body .add__text, body .add__btn, body .add__checkrule {
+  display: block;
+  margin: 0 0 5px 0;
+  padding: 5px;
+  width: 94%;
+  border: 1px solid rgba(0, 89, 181, 0.82);
+}
+
+body .add__checkrule {
+  border: none;
+  font-size: 12px;
+}
+
+body .add__btn {
+  -webkit-box-sizing: content-box;
+          box-sizing: content-box;
+  color: #FFF;
+  text-transform: uppercase;
+  background: #007DDC;
+}
+
+body .add__btn:disabled {
+  background: #CCC;
+  color: #999;
 }
 /*# sourceMappingURL=style.css.map */

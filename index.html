@@ -174,34 +174,103 @@
       // }
 
       //Uncontrolled Components
-      class TestInput extends React.Component {
-        constructor(props) {
-          super(props);
-          this.input = React.createRef();
+      class Add extends React.Component {
+        state = { //adding initial state
+          name: '',
+          text: '',
+          bigText: '',
+          agree: false
         }
 
         onBtnClickHandler = (e) => {
-          alert(this.input.current.value);
+          e.preventDefault();
+
+          const {name, text, bigText} = this.state;
+
+          // alert(`${name}\n${text}`);
+          this.props.onAddNews({
+            id: +new Date(),
+            author: name,
+            text,
+            bigText
+          });
+        }
+
+        // handleNameChange = (e) => {
+        //   this.setState({name: e.currentTarget.value});
+        // }
+
+        // handleTextChange = (e) => {
+        //   this.setState({text: e.currentTarget.value});
+        // }
+
+        handleChange = (e) => {
+          const {id, value} = e.currentTarget;
+
+          this.setState({[id]: value})
+        }
+
+        handleCheckboxChange = (e) => {
+          this.setState({agree: e.currentTarget.checked});
+        }
+
+        validate = () => {
+          const {name, text, bigText, agree} = this.state;
+
+          if (name.trim() && text.trim(), bigText.trim() && agree) {
+            return true;
+          }
+
+          return false;
+        }
+
+        render() {
+          const {name, text, bigText, agree} = this.state;
+
+          return (
+              <form className="add">
+                <input id="name" type="text" className="add__author" onChange={this.handleChange} value={name} placeholder="Ваше имя"/>
+                <textarea id="text" className="add__text" onChange={this.handleChange} value={text} placeholder="Текст новости"></textarea>
+                <textarea id="bigText"className="add__text" onChange={this.handleChange} value={bigText} placeholder="Полный текст новости"></textarea>
+                <label className="add__checkrule">
+                  <input type="checkbox" name="add__agree" id="" onChange={this.handleCheckboxChange}/>Я согласен с правилами
+                </label>
+                <button 
+                  className="add__btn" 
+                  type="button" 
+                  onClick={this.onBtnClickHandler} 
+                  disabled={!this.validate()}>
+                    Показать alert
+                  </button>
+              </form>
+          )
+        }
+      }
+
+      Add.propTypes = {  onAddNews: PropTypes.func.isRequired, // func используется для проверки передачи function}
+      }
+
+      class App extends React.Component {
+        state ={
+          news: myNews,
+        }
+
+        handleAddNews = (data) => {
+          // console.log('я вызвана из Add, но имею доступ к this.state у App!', this.state);
+          const nextNews = [data, ...this.state.news];
+
+          this.setState({news: nextNews});
         }
 
         render() {
           return (
             <React.Fragment>
-              <input className="test-input" defaultValue="" placeholder="введите значение" ref={this.input}/>
-              <button type="button" onClick={this.onBtnClickHandler}>Показать alert</button>
+              <Add onAddNews = {this.handleAddNews}/>
+              <h3>Новости</h3>
+              <News data={this.state.news}/> {/* добавили свойство data */}
             </React.Fragment>
           )
         }
-      }
-
-      const App = () => {
-        return (
-          <React.Fragment>
-            <h3>Новости</h3>
-            <TestInput/>
-            <News data={myNews}/> {/* добавили свойство data */}
-          </React.Fragment>
-        )
       }
 
       ReactDOM.render(
